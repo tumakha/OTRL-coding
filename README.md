@@ -1,6 +1,6 @@
 ## OTRL coding exercise
 
-Description in [OTRL Coding exercise.pdf](./OTRL Coding exercise.pdf)
+Description in [OTRL_Coding_exercise.pdf](OTRL_Coding_exercise.pdf)
 
 ## Run tests
 
