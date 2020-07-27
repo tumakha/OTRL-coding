@@ -1,3 +1,4 @@
+import scala.concurrent.ExecutionContext.Implicits.global
 import scala.concurrent.Future
 
 /**
@@ -10,11 +11,27 @@ import scala.concurrent.Future
  */
 object Exercise1 {
 
-  def f1: Future[Unit] = ???
-  def f2: Future[Unit] = ???
-  def f3: Future[Unit] = ???
-  def f4: Future[Unit] = ???
+  def f1: Future[Unit] = Future { println("f1") }
+  def f2: Future[Unit] = Future { println("f2") }
+  def f3: Future[Unit] = Future { println("f3") }
+  def f4: Future[Unit] = Future { println("f4") }
 
+  def parallel4: Future[Seq[Unit]] = Future sequence Seq(f1, f2, f3, f4)
+
+  def strictOrder: Future[Unit] =
+    for {
+      _ <- f1
+      _ <- f2
+      _ <- f3
+      res <- f4
+    } yield res
+
+  def f1_f2orf3_f4: Future[Unit] =
+    for {
+      _ <- f1
+      _ <- Future sequence Seq(f2, f3)
+      res <- f4
+    } yield res
 
 }
 
@@ -25,8 +42,7 @@ object Exercise2 {
 
   val f1: (Int, Int) => Int = (a, b) => a + b
   val f2: Int => String = _.toString
-  val f3: (Int, Int) => String = ???
-
+  val f3: (Int, Int) => String = (f1.tupled andThen f2) (_, _)
 
 }
 
@@ -35,14 +51,25 @@ object Exercise2 {
  *
  * which represents the number 123, write a function to increment it by one without converting types.
  * Your function should produce the expected result for the following test cases:
- *   Nil => Nil
- *   Seq(0) => Seq(1)
- *   Seq(1, 2, 3) => Seq(1, 2, 4)
- *   Seq(9, 9, 9) => Seq(1, 0, 0, 0)
+ * Nil => Nil
+ * Seq(0) => Seq(1)
+ * Seq(1, 2, 3) => Seq(1, 2, 4)
+ * Seq(9, 9, 9) => Seq(1, 0, 0, 0)
  */
 object Exercise3 {
 
-
+  def addOne(digits: Seq[Int]): Seq[Int] =
+    digits.foldRight(Seq[Int]()) {
+      case (digit, seq) =>
+        val carry = seq match {
+          case Nil | 1 +: 0 +: _ => 1
+          case _ => 0
+        }
+        val previous = if (seq.isEmpty || carry == 0) seq else seq.tail
+        val sum = digit + carry
+        if (sum <= 9) sum +: previous
+        else 1 +: 0 +: previous
+    }
 
 }
 
@@ -54,7 +81,7 @@ object Exercise3 {
  */
 object Exercise4 {
 
-  def f[A](a: A ): Future[A] = ???
+  def f[A](a: A): Future[A] = ???
 
 }
 
@@ -67,6 +94,7 @@ object Exercise5 {
 
   trait MyAlg[F[_]] {
     def insertItSomewhere(someInt: Int): F[Unit]
+
     def doSomething(someInt: Int): F[Int]
   }
 
