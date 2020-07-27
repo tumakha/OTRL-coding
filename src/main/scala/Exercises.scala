@@ -65,7 +65,7 @@ object Exercise3 {
           case Nil | 1 +: 0 +: _ => 1
           case _ => 0
         }
-        val previous = if (seq.isEmpty || carry == 0) seq else seq.tail
+        val previous = if (carry == 0 || seq.isEmpty) seq else seq.tail
         val sum = digit + carry
         if (sum <= 9) sum +: previous
         else 1 +: 0 +: previous
