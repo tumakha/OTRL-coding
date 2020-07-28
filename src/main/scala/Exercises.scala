@@ -92,7 +92,7 @@ object Exercise4 {
  */
 object Exercise5 {
 
-  // Trait MyAlg use higher-kinded type F[_] wich allows to use in MyAlg implementation some generic type.
+  // Trait MyAlg uses higher-kinded type F[_] which allows to use in MyAlg implementation some generic type.
   // For example some Monads like Future[_] or IO[_] can be used as F[_]
   trait MyAlg[F[_]] {
     def insertItSomewhere(someInt: Int): F[Unit]
@@ -133,5 +133,70 @@ object Exercise6 {
  */
 object Exercise7 {
 
+  /** Address Book REST API
+   *
+   * Contact JSON object example:
+   * {
+   *  "contactId": 1,
+   *  "firstname": "Jack",
+   *  "lastname": "London",
+   *  "email": "jack@email.co.uk",
+   *  "phone": "1234567",
+   *  "addressLine1": "1 High Street",
+   *  "city": "London",
+   *  "country": "UK",
+   *  "postCode": "WC123AB"
+   * }
+   *
+   * GET /v1/contact?page={page}&size={size} - Get all contacts
+   * curl -X GET "https://localhost/v1/contact?page=0&size=20" -H "accept: application/json"
+   * returns
+   * 200 list of contacts
+   * 500 server error
+   *
+   * GET /v1/contact/{contactId} - Get contact
+   * curl -X GET "https://localhost/v1/contact/12001" -H "accept: application/json"
+   * returns
+   * 200 contact json
+   * 404 contact not found
+   * 500 server error
+   *
+   * POST /v1/contact/findByExample - Search contact by properties specified in json object provided in request body
+   * curl -X POST "https://localhost/v1/contact/findByExample" -d "{ \"firstname\":\"Jack\", \"city\":"London"}" -H "Content-Type: application/json"
+   * returns
+   * 200 list of contacts
+   * 400 Bad Request
+   * 500 server error
+   *
+   * POST /v1/contact - Create contact
+   * curl -X POST "https://localhost/v1/contact" -d "{Contact JSON}" -H "Content-Type: application/json"
+   * returns
+   * 201 new contact json
+   * 400 Bad Request
+   * 500 server error
+   *
+   * PUT /v1/contact/{contactId} - Update all contact properties
+   * curl -X PUT "https://localhost/v1/contact/12001" -d "{Contact JSON}" -H "Content-Type: application/json"
+   * returns
+   * 200 contact json
+   * 400 Bad Request
+   * 404 contact not found
+   * 500 server error
+   *
+   * PATCH /v1/contact/{contactId} - Update only contact properties specified in request json body
+   * curl -X PATCH "https://localhost/v1/contact/12001" -d "{ \"phone\":\"11223344\" }" -H "Content-Type: application/json"
+   * returns
+   * 200 contact json
+   * 400 Bad Request
+   * 404 contact not found
+   * 500 server error
+   *
+   * DELETE /v1/contact/{contactId} - Delete contact
+   * curl -X DELETE "https://localhost/v1/contact/12001" -H "accept: application/json"
+   * returns
+   * 200 {"status":"OK"}
+   * 404 contact not found
+   * 500 server error
+   */
 
 }
