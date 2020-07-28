@@ -41,7 +41,13 @@ class ExercisesSpec extends AnyFlatSpec with should.Matchers {
     addOne(Seq(9, 9, 9)) shouldBe Seq(1, 0, 0, 0)
     addOne(Seq(9, 9, 0)) shouldBe Seq(9, 9, 1)
     addOne(Seq(9, 9, 1)) shouldBe Seq(9, 9, 2)
+    addOne(Seq(3, 9, 9)) shouldBe Seq(4, 0, 0)
+    addOne(Seq(1, 0, 0, 9, 9)) shouldBe Seq(1, 0, 1, 0, 0)
   }
 
+  "Exercise4" should "safely handle calling Future" in {
+    Exercise4.g(12).unsafeRunSync() shouldBe 12
+    Exercise4.g("abc").unsafeRunSync() shouldBe "abc"
+  }
 
 }

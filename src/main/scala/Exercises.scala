@@ -1,5 +1,5 @@
 import scala.concurrent.ExecutionContext.Implicits.global
-import scala.concurrent.Future
+import scala.concurrent.{ExecutionContext, Future}
 
 /**
  * 1. Given these functions.
@@ -49,15 +49,13 @@ object Exercise2 {
 object Exercise3 {
 
   def addOne(digits: Seq[Int]): Seq[Int] =
-    digits.foldRight(Seq[Int]())((digit, seq) =>
-      seq match {
-        case Nil | 1 +: 0 +: _ =>
-          val previous = seq.drop(1)
-          if (digit == 9) 1 +: 0 +: previous
-          else (digit + 1) +: previous
-        case s => digit +: s
-      }
-    )
+    digits.foldRight((Seq[Int](), 1)) {
+      case (digit, (seq, carry)) =>
+        val previous = if (carry == 1) seq.drop(1) else seq
+        val sum = digit + carry
+        if (sum == 10) (1 +: 0 +: previous, 1)
+        else (sum +: previous, 0)
+    }._1
 
 }
 
@@ -69,7 +67,15 @@ object Exercise3 {
  */
 object Exercise4 {
 
-  def f[A](a: A): Future[A] = ???
+  import cats.effect.{ContextShift, IO}
+
+  implicit val contextShift: ContextShift[IO] = IO.contextShift(ExecutionContext.global)
+
+  def f[A](a: A): Future[A] = Future {
+    a
+  }
+
+  def g[A](a: A): IO[A] = IO fromFuture IO(f(a))
 
 }
 
