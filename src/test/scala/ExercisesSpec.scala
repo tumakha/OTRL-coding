@@ -1,9 +1,12 @@
+import java.util.concurrent.atomic.AtomicInteger
+
 import Exercise3.addOne
 import Exercise4.g
 import Exercise4.g2
 import Exercise5.MyAlg
 import Exercise6.MyProg
 import org.scalatest.Inside
+import org.scalatest.concurrent.Eventually
 import org.scalatest.flatspec._
 import org.scalatest.matchers._
 
@@ -16,7 +19,7 @@ import scala.concurrent.ExecutionContext.Implicits.global
 /**
  * @author Yuriy Tumakha
  */
-class ExercisesSpec extends AnyFlatSpec with should.Matchers with Inside {
+class ExercisesSpec extends AnyFlatSpec with should.Matchers with Inside with Eventually {
 
   val timeout: Duration = 10 seconds
 
@@ -81,10 +84,10 @@ class ExercisesSpec extends AnyFlatSpec with should.Matchers with Inside {
     import cats.implicits._
 
     val futureAlg = new MyAlg[Future] {
-      var sum = 0
+      val sum = new AtomicInteger
 
       override def insertItSomewhere(someInt: Int): Future[Unit] = Future {
-        sum += someInt
+        sum addAndGet someInt
         println(s"$someInt inserted")
       }
 
@@ -94,7 +97,8 @@ class ExercisesSpec extends AnyFlatSpec with should.Matchers with Inside {
     val myProg: MyProg[Future] = new MyProg(futureAlg)
     myProg.checkThenAddIt(9)
     myProg.checkThenAddIt(3)
-    futureAlg.sum shouldBe 90
+
+    eventually { futureAlg.sum.intValue shouldBe 90 }
   }
 
 }
