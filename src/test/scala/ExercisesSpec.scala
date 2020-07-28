@@ -1,15 +1,19 @@
 import Exercise3.addOne
+import Exercise4.g
+import Exercise4.g2
+import org.scalatest.Inside
 import org.scalatest.flatspec._
 import org.scalatest.matchers._
 
 import scala.concurrent.Await
 import scala.concurrent.duration._
 import scala.language.postfixOps
+import scala.util.{Failure, Success}
 
 /**
  * @author Yuriy Tumakha
  */
-class ExercisesSpec extends AnyFlatSpec with should.Matchers {
+class ExercisesSpec extends AnyFlatSpec with should.Matchers with Inside {
 
   val timeout: Duration = 10 seconds
 
@@ -46,8 +50,19 @@ class ExercisesSpec extends AnyFlatSpec with should.Matchers {
   }
 
   "Exercise4" should "safely handle calling Future" in {
-    Exercise4.g(12).unsafeRunSync() shouldBe 12
-    Exercise4.g("abc").unsafeRunSync() shouldBe "abc"
+    g(12).unsafeRunSync() shouldBe Right(12)
+    g("abc").unsafeRunSync() shouldBe Right("abc")
+
+    val either = g("error").unsafeRunSync()
+    inside(either) { case Left(e) =>
+      e.getMessage shouldBe "Exception"
+    }
+
+    val fut1 = g2(123)
+    Await.result(fut1, timeout) shouldBe Success(123)
+
+    val fut2 = g2("error")
+    Await.result(fut2, timeout).failed.get.getMessage shouldBe "Exception"
   }
 
 }

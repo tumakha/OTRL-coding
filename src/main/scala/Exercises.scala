@@ -1,5 +1,6 @@
 import scala.concurrent.ExecutionContext.Implicits.global
 import scala.concurrent.{ExecutionContext, Future}
+import scala.util.{Failure, Success, Try}
 
 /**
  * 1. Given these functions.
@@ -71,9 +72,16 @@ object Exercise4 {
 
   implicit val contextShift: ContextShift[IO] = IO.contextShift(ExecutionContext.global)
 
-  def f[A](a: A): Future[A] = Future { a }
+  def f[A](a: A): Future[A] = Future {
+    a match {
+      case "error" => throw new RuntimeException("Exception")
+      case any => any
+    }
+  }
 
-  def g[A](a: A): IO[A] = IO fromFuture IO(f(a))
+  def g[A](a: A): IO[Either[Throwable, A]] = (IO fromFuture IO(f(a))).attempt
+
+  def g2[A](a: A): Future[Try[A]] = f(a) transform (Try(_))
 
 }
 
