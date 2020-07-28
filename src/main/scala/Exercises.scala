@@ -71,9 +71,7 @@ object Exercise4 {
 
   implicit val contextShift: ContextShift[IO] = IO.contextShift(ExecutionContext.global)
 
-  def f[A](a: A): Future[A] = Future {
-    a
-  }
+  def f[A](a: A): Future[A] = Future { a }
 
   def g[A](a: A): IO[A] = IO fromFuture IO(f(a))
 
