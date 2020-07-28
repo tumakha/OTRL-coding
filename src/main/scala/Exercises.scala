@@ -49,16 +49,15 @@ object Exercise2 {
 object Exercise3 {
 
   def addOne(digits: Seq[Int]): Seq[Int] =
-    digits.foldRight(Seq[Int]())((digit, seq) => {
-      val carry = seq match {
-        case Nil | 1 +: 0 +: _ => 1
-        case _ => 0
+    digits.foldRight(Seq[Int]())((digit, seq) =>
+      seq match {
+        case Nil | 1 +: 0 +: _ =>
+          val previous = seq.drop(1)
+          if (digit == 9) 1 +: 0 +: previous
+          else (digit + 1) +: previous
+        case s => digit +: s
       }
-      val previous = if (carry == 0 || seq.isEmpty) seq else seq.tail
-      val sum = digit + carry
-      if (sum <= 9) sum +: previous
-      else 1 +: 0 +: previous
-    })
+    )
 
 }
 
