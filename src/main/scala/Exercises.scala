@@ -1,6 +1,6 @@
 import scala.concurrent.ExecutionContext.Implicits.global
 import scala.concurrent.{ExecutionContext, Future}
-import scala.util.{Failure, Success, Try}
+import scala.util.Try
 
 /**
  * 1. Given these functions.
@@ -92,6 +92,8 @@ object Exercise4 {
  */
 object Exercise5 {
 
+  // Trait MyAlg use higher-kinded type F[_] wich allows to use in MyAlg implementation some generic type.
+  // For example some Monads like Future[_] or IO[_] can be used as F[_]
   trait MyAlg[F[_]] {
     def insertItSomewhere(someInt: Int): F[Unit]
 
@@ -111,9 +113,15 @@ object Exercise5 {
  */
 object Exercise6 {
 
-  class MyProg {
-    def checkThenAddIt(someInt: Int) = ???
-  }
+  import Exercise5.MyAlg
+  import cats._
+  import cats.implicits._
+
+  class MyProg[F[_]: Monad](myAlg: MyAlg[F]) {
+
+      def checkThenAddIt(someInt: Int): F[Unit] = myAlg.doSomething(someInt).flatMap(myAlg.insertItSomewhere)
+
+    }
 
 }
 

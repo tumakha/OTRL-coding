@@ -1,14 +1,17 @@
 import Exercise3.addOne
 import Exercise4.g
 import Exercise4.g2
+import Exercise5.MyAlg
+import Exercise6.MyProg
 import org.scalatest.Inside
 import org.scalatest.flatspec._
 import org.scalatest.matchers._
 
-import scala.concurrent.Await
+import scala.concurrent.{Await, Future}
 import scala.concurrent.duration._
 import scala.language.postfixOps
-import scala.util.{Failure, Success}
+import scala.util.Success
+import scala.concurrent.ExecutionContext.Implicits.global
 
 /**
  * @author Yuriy Tumakha
@@ -63,6 +66,35 @@ class ExercisesSpec extends AnyFlatSpec with should.Matchers with Inside {
 
     val fut2 = g2("error")
     Await.result(fut2, timeout).failed.get.getMessage shouldBe "Exception"
+  }
+
+  "Exercise5" should "abstract over higher-kinded type" in {
+    val optionAlg = new MyAlg[Option] {
+      override def insertItSomewhere(someInt: Int): Option[Unit] = None
+      override def doSomething(someInt: Int): Option[Int] = Some(someInt)
+    }
+
+    optionAlg.doSomething(123) shouldBe Some(123)
+  }
+
+  "Exercise6" should "use higher-kinded type MyAlg from Exercise 5" in {
+    import cats.implicits._
+
+    val futureAlg = new MyAlg[Future] {
+      var sum = 0
+
+      override def insertItSomewhere(someInt: Int): Future[Unit] = Future {
+        sum += someInt
+        println(s"$someInt inserted")
+      }
+
+      override def doSomething(someInt: Int): Future[Int] = Future { someInt * someInt }
+    }
+
+    val myProg: MyProg[Future] = new MyProg(futureAlg)
+    myProg.checkThenAddIt(9)
+    myProg.checkThenAddIt(3)
+    futureAlg.sum shouldBe 90
   }
 
 }
