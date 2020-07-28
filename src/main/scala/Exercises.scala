@@ -14,24 +14,14 @@ object Exercise1 {
   def f1: Future[Unit] = Future { println("f1") }
   def f2: Future[Unit] = Future { println("f2") }
   def f3: Future[Unit] = Future { println("f3") }
+  // def f3: Future[Unit] = Future { throw new RuntimeException("f3") }
   def f4: Future[Unit] = Future { println("f4") }
 
   def parallel4: Future[Seq[Unit]] = Future sequence Seq(f1, f2, f3, f4)
 
-  def strictOrder: Future[Unit] =
-    for {
-      _ <- f1
-      _ <- f2
-      _ <- f3
-      res <- f4
-    } yield res
+  def strictOrder: Future[Unit] = f1 flatMap (_ => f2) flatMap (_ => f3) flatMap (_ => f4)
 
-  def f1_f2orf3_f4: Future[Unit] =
-    for {
-      _ <- f1
-      _ <- Future sequence Seq(f2, f3)
-      res <- f4
-    } yield res
+  def f1_f2orf3_f4: Future[Unit] = f1 flatMap (_ => Future sequence Seq(f2, f3)) flatMap (_ => f4)
 
 }
 
@@ -59,17 +49,16 @@ object Exercise2 {
 object Exercise3 {
 
   def addOne(digits: Seq[Int]): Seq[Int] =
-    digits.foldRight(Seq[Int]()) {
-      case (digit, seq) =>
-        val carry = seq match {
-          case Nil | 1 +: 0 +: _ => 1
-          case _ => 0
-        }
-        val previous = if (carry == 0 || seq.isEmpty) seq else seq.tail
-        val sum = digit + carry
-        if (sum <= 9) sum +: previous
-        else 1 +: 0 +: previous
-    }
+    digits.foldRight(Seq[Int]())((digit, seq) => {
+      val carry = seq match {
+        case Nil | 1 +: 0 +: _ => 1
+        case _ => 0
+      }
+      val previous = if (carry == 0 || seq.isEmpty) seq else seq.tail
+      val sum = digit + carry
+      if (sum <= 9) sum +: previous
+      else 1 +: 0 +: previous
+    })
 
 }
 

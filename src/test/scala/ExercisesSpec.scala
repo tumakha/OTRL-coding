@@ -14,6 +14,7 @@ class ExercisesSpec extends AnyFlatSpec with should.Matchers {
   val timeout: Duration = 10 seconds
 
   "Exercise1" should "run functions in correct order" in {
+    println("No dependencies")
     val fut1 = Exercise1.parallel4
     Await.ready(fut1, timeout)
 
