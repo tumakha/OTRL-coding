@@ -119,7 +119,7 @@ object Exercise6 {
 
   class MyProg[F[_]: Monad](myAlg: MyAlg[F]) {
 
-      def checkThenAddIt(someInt: Int): F[Unit] = myAlg.doSomething(someInt).flatMap(myAlg.insertItSomewhere)
+      def checkThenAddIt(someInt: Int): F[Unit] = myAlg.doSomething(someInt) flatMap myAlg.insertItSomewhere
 
     }
 
