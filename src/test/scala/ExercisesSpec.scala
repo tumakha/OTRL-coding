@@ -19,6 +19,7 @@ import scala.concurrent.ExecutionContext.Implicits.global
 /**
  * @author Yuriy Tumakha
  */
+// scalastyle:off magic.number
 class ExercisesSpec extends AnyFlatSpec with should.Matchers with Inside with Eventually {
 
   val timeout: Duration = 10 seconds
