@@ -1,6 +1,6 @@
 import java.util.concurrent.atomic.AtomicInteger
 
-import Exercise3.addOne
+import Exercise3.{addOne, addOneRecur}
 import Exercise4.g
 import Exercise4.g2
 import Exercise5.MyAlg
@@ -54,6 +54,16 @@ class ExercisesSpec extends AnyFlatSpec with should.Matchers with Inside with Ev
     addOne(Seq(9, 9, 1)) shouldBe Seq(9, 9, 2)
     addOne(Seq(3, 9, 9)) shouldBe Seq(4, 0, 0)
     addOne(Seq(1, 0, 0, 9, 9)) shouldBe Seq(1, 0, 1, 0, 0)
+
+    addOneRecur(Nil) shouldBe Nil
+    addOneRecur(Seq(0)) shouldBe Seq(1)
+    addOneRecur(Seq(1)) shouldBe Seq(2)
+    addOneRecur(Seq(9)) shouldBe Seq(1, 0)
+    addOneRecur(Seq(1, 2, 3)) shouldBe Seq(1, 2, 4)
+    addOneRecur(Seq(9, 9, 9)) shouldBe Seq(1, 0, 0, 0)
+    addOneRecur(Seq(9, 9, 0)) shouldBe Seq(9, 9, 1)
+    addOneRecur(Seq(3, 9, 9)) shouldBe Seq(4, 0, 0)
+    addOneRecur(Seq(1, 0, 0, 9, 9)) shouldBe Seq(1, 0, 1, 0, 0)
   }
 
   "Exercise4" should "safely handle calling Future" in {

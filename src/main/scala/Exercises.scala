@@ -58,6 +58,17 @@ object Exercise3 {
         else (sum +: previous, 0)
     }._1
 
+  def addOneRecur(digits: Seq[Int]): Seq[Int] = {
+    def add1(reversed: Seq[Int]): Seq[Int] =
+      reversed match {
+        case Nil => Seq(1)
+        case digit :: tail if digit < 9 => (digit + 1) :: tail
+        case _ :: tail => 0 +: add1(tail)
+      }
+
+    if (digits.isEmpty) Nil else add1(digits.reverse).reverse
+  }
+
 }
 
 /**
