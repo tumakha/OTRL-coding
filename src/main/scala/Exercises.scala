@@ -61,9 +61,9 @@ object Exercise3 {
   def addOneRecur(digits: Seq[Int]): Seq[Int] = {
     def add1(reversed: Seq[Int]): Seq[Int] =
       reversed match {
-        case Nil => Seq(1)
-        case digit :: tail if digit < 9 => (digit + 1) :: tail
-        case _ :: tail => 0 +: add1(tail)
+        case Nil            => Seq(1)
+        case 9 +: tail      => 0 +: add1(tail)
+        case digit +: tail  => (digit + 1) +: tail
       }
 
     if (digits.isEmpty) Nil else add1(digits.reverse).reverse
